@@ -1,28 +1,11 @@
+@'
 # HAMAILI Ahmed-Imad · Connected Systems Portfolio
 
-Bilingual static portfolio for HAMAILI Ahmed-Imad, focused on connected systems, IoT, TCP/IP networks, cybersecurity, DevOps, data, mobility and applied AI.
+Bilingual portfolio presenting my work around connected systems: embedded IoT, TCP/IP networks, cybersecurity, DevOps, data pipelines, mobility systems and applied AI.
 
-The portfolio presents a full technical chain from sensor acquisition to decision-making: embedded edge, network transport, APIs, storage, monitoring, security, infrastructure and applied intelligence.
+## Positioning
 
-## Local usage
-
-Open directly:
-
-```text
-index.html
-```
-
-Or run a local static server:
-
-```bash
-python -m http.server 8092
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8092
-```
+From sensor acquisition to decision-making, the portfolio shows how I work across the full technical chain: edge devices, network transport, APIs, storage, monitoring, infrastructure and applied intelligence.
 
 ## Main sections
 
@@ -33,23 +16,20 @@ http://127.0.0.1:8092
 - Projects
 - Contact
 
-## GitHub Pages
+## Technical focus
 
-After pushing the repository, enable GitHub Pages from:
+- Embedded IoT: ESP32, Raspberry Pi, Arduino, MQTT, CoAP, AMQP, LoRaWAN, Zigbee, NB-IoT, BLE
+- Networks: TCP/IP, IPv4/IPv6, ARP, DNS, DHCP, TCP, UDP, ICMP, VLAN, trunking, STP, LACP, RIP, OSPF, EIGRP, BGP, NAT, PAT, ACL, VPN, IDS/IPS, Wireshark, PCAP
+- Software and APIs: Python, Java, C/C++, JavaScript, Dart, Kotlin, REST, GraphQL, SOAP, Flask, FastAPI, Node.js, Express.js
+- Data and observability: PostgreSQL, PostGIS, MongoDB, InfluxDB, ELK Stack, Prometheus, Grafana
+- DevOps and systems: Docker, Kubernetes, Proxmox, Terraform, GitLab CI, Ansible, Linux, Bash
+- Applied AI: supervised and unsupervised learning, deep learning, reinforcement learning, anomaly detection, time-series analysis and classification
 
-```text
-Settings → Pages → Deploy from a branch → main → /root → Save
-```
+## Repository
 
-Expected URL:
-
-```text
-https://doditpiot.github.io/hamaili-connected-systems-portfolio/
-```
+This repository contains the static source of the portfolio.
 
 ## Author
 
 HAMAILI Ahmed-Imad
-
-- GitHub: doditpiot
-- LinkedIn: Ahmed-Imad Hamaili
+'@ | Set-Content -Path README.md -Encoding UTF8
