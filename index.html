@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HAMAILI Ahmed-Imad — ingénieur systèmes connectés. Du capteur à la décision : logiciel, réseaux TCP/IP, IoT embarqué, cybersécurité, données, DevOps et IA, assemblés en une seule chaîne." />
+  <meta name="author" content="HAMAILI Ahmed-Imad" />
+  <meta property="og:title" content="HAMAILI Ahmed-Imad · Connected Systems" />
+  <meta property="og:description" content="Du capteur à la décision — un profil d'ingénieur qui tient toute la pile : edge, réseau, services, données et intelligence." />
+  <meta property="og:type" content="website" />
+  <title>HAMAILI Ahmed-Imad · Connected Systems</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      color-scheme: dark;
+
+      /* Instrument panel — graphite, not warm-black, not blue-black */
+      --ink:        #0c0c0e;
+      --ink-2:      #0a0a0c;
+      --panel:      #131317;
+      --panel-2:    #17171c;
+      --raise:      #1d1d23;
+
+      --line:       rgba(236, 238, 243, 0.08);
+      --line-2:     rgba(236, 238, 243, 0.14);
+      --grid:       rgba(236, 238, 243, 0.035);
+
+      --text:       #eef0f2;
+      --soft:       #c5c9d0;
+      --muted:      #868c96;
+      --faint:      #5c616b;
+
+      /* Brand = amber phosphor / status LED (keeps the warmth of the original) */
+      --amber:      #eaa53e;
+      --amber-soft: #f3c071;
+      --amber-deep: #b97c24;
+
+      /* Channel colors — used dim at rest, lit on focus */
+      --green:  #5fe3a4;
+      --ice:    #5cc8ff;
+      --red:    #ff7d7d;
+
+      --max: 1180px;
+      --display: "Archivo Expanded", "Archivo", system-ui, sans-serif;
+      --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* single restrained ambient glow, top-left — no global grid, no grain, no cursor halo */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(60rem 40rem at 8% -8%, rgba(234,165,62,0.07), transparent 70%),
+        radial-gradient(50rem 40rem at 100% 0%, rgba(92,200,255,0.05), transparent 70%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; color: inherit; }
+    h1, h2, h3, h4, p { margin: 0; }
+    ul { margin: 0; padding: 0; list-style: none; }
+
+    ::selection { background: rgba(234,165,62,0.28); color: #fff; }
+
+    :focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin-inline: auto; }
+    .mono { font-family: var(--mono); }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+    .eyebrow .bar { color: var(--faint); margin: 0 0.5em; }
+
+    /* ---------- header ---------- */
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(12,12,14,0.72);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+    .top[data-elevated="true"] {
+      background: rgba(10,10,12,0.92);
+      border-bottom-color: var(--line-2);
+    }
+    .top-inner {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .brand { display: inline-flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+    .brand .idx { font-family: var(--mono); font-size: 12px; color: var(--amber); }
+    .brand .nm { font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: -0.01em; }
+    .brand .role { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+
+    .nav { margin-left: auto; display: flex; gap: 2px; }
+    .nav a {
+      font-family: var(--mono); font-size: 12px;
+      color: var(--soft); padding: 8px 11px; border-radius: 5px;
+      transition: color 0.18s, background 0.18s;
+    }
+    .nav a:hover { color: var(--text); background: rgba(236,238,243,0.06); }
+
+    .lang {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+      color: var(--amber); padding: 8px 11px; border-radius: 5px; cursor: pointer;
+      background: transparent; border: 1px solid var(--line-2);
+      transition: background 0.18s, color 0.18s;
+    }
+    .lang:hover { background: rgba(234,165,62,0.12); }
+    .gh {
+      font-family: var(--mono); font-size: 12px; color: var(--soft);
+      padding: 8px 11px; border-radius: 5px; border: 1px solid var(--line);
+      transition: color 0.18s, border-color 0.18s;
+    }
+    .gh:hover { color: var(--text); border-color: var(--line-2); }
+
+    /* ---------- hero ---------- */
+    .hero { padding: 78px 0 70px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 52px;
+      align-items: center;
+    }
+    .hero h1 {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(38px, 5.4vw, 66px);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      margin: 18px 0 22px;
+    }
+    .hero h1 .hl { color: var(--amber); }
+    .hero-lead {
+      max-width: 40ch;
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--soft);
+      margin-bottom: 30px;
+    }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      height: 46px; padding: 0 20px; border-radius: 7px;
+      font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em;
+      transition: transform 0.16s ease, background 0.18s, border-color 0.18s;
+    }
+    .btn .arr { font-size: 15px; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary {
+      background: var(--amber); color: #20150a; font-weight: 600;
+      box-shadow: 0 12px 30px rgba(234,165,62,0.18);
+    }
+    .btn-primary:hover { background: var(--amber-soft); }
+    .btn-ghost { border: 1px solid var(--line-2); color: var(--soft); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--amber); }
+
+    /* ---------- the stack instrument (signature) ---------- */
+    .stack {
+      position: relative;
+      border: 1px solid var(--line-2);
+      border-radius: 12px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        linear-gradient(180deg, var(--panel), var(--ink-2));
+      background-size: 26px 26px, 26px 26px, 100% 100%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+    .stack-head {
+      display: flex; align-items: center; gap: 10px;
+      height: 46px; padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .stack-head .axis { margin-left: auto; color: var(--faint); letter-spacing: 0.1em; }
+    .stack-head b { color: var(--soft); font-weight: 500; }
+
+    .stack-body { position: relative; display: flex; flex-direction: column; }
+    /* signal beam climbing the gutter */
+    .signal {
+      position: absolute;
+      left: 13px; width: 2px; height: 46px;
+      border-radius: 2px;
+      background: linear-gradient(to top, transparent, var(--amber) 45%, #fff8ec 50%, var(--amber) 55%, transparent);
+      box-shadow: 0 0 14px 2px rgba(234,165,62,0.55);
+      animation: climb 6s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+      pointer-events: none;
+      z-index: 4;
+    }
+    @keyframes climb {
+      0%   { top: calc(100% - 46px); opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      100% { top: -4px; opacity: 0; }
+    }
+
+    .layer {
+      position: relative;
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      padding: 13px 16px 13px 14px;
+      border: 0; background: transparent; cursor: pointer;
+      border-top: 1px solid var(--line);
+      transition: background 0.18s ease;
+    }
+    .layer:first-child { border-top: 0; }
+    .layer::before {
+      content: "";
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--c, var(--muted));
+      opacity: 0.35;
+      transition: opacity 0.18s;
+    }
+    .layer:hover { background: rgba(236,238,243,0.035); }
+    .layer:hover::before { opacity: 1; }
+    .layer .dot {
+      justify-self: center;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--c, var(--muted));
+      box-shadow: 0 0 10px var(--c, transparent);
+      opacity: 0.65;
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .layer:hover .dot { opacity: 1; transform: scale(1.2); }
+    .layer .nm {
+      font-family: var(--display); font-weight: 700; font-size: 14px;
+      letter-spacing: -0.01em; color: var(--text);
+    }
+    .layer .tier {
+      display: block; margin-top: 1px;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--faint);
+    }
+    .layer .carry {
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      text-align: right; white-space: nowrap;
+    }
+
+    .stack-foot {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line-2);
+    }
+    .stack-foot div {
+      padding: 14px 16px; border-right: 1px solid var(--line);
+    }
+    .stack-foot div:last-child { border-right: 0; }
+    .stack-foot b {
+      display: block; font-family: var(--display); font-weight: 800;
+      font-size: 22px; letter-spacing: -0.02em; color: var(--text);
+    }
+    .stack-foot span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    /* ---------- generic section ---------- */
+    section { scroll-margin-top: 76px; }
+    .block { padding: 86px 0; border-top: 1px solid var(--line); }
+    .head { max-width: 60ch; margin-bottom: 42px; }
+    .head h2 {
+      font-family: var(--display); font-weight: 800;
+      font-size: clamp(28px, 3.6vw, 44px); line-height: 1.02;
+      letter-spacing: -0.02em; margin: 14px 0 14px;
+    }
+    .head p { color: var(--muted); font-size: 16px; max-width: 52ch; }
+
+    /* ---------- profile ---------- */
+    .profile-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 34px; align-items: start;
+    }
+    .profile-lead {
+      font-size: clamp(20px, 2.3vw, 27px); line-height: 1.4;
+      font-weight: 500; letter-spacing: -0.01em; color: var(--text);
+    }
+    .profile-lead .em { color: var(--amber); }
+    .profile-pos { margin-top: 22px; color: var(--muted); font-size: 16px; max-width: 48ch; }
+    .creds { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; max-width: 720px; }
+    .creds .ch {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 14px 18px; border-bottom: 1px solid var(--line);
+    }
+    .cred {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 4px 14px; align-items: baseline;
+      padding: 18px; border-bottom: 1px solid var(--line);
+    }
+    .cred:last-child { border-bottom: 0; }
+    .cred .lv { font-family: var(--mono); font-size: 11px; color: var(--amber); letter-spacing: 0.06em; white-space: nowrap; }
+    .cred .dg { font-size: 14.5px; color: var(--soft); line-height: 1.4; }
+    .cred .yr { font-family: var(--mono); font-size: 11px; color: var(--faint); white-space: nowrap; }
+    .cred .org { grid-column: 2 / 3; font-size: 12.5px; color: var(--muted); }
+    .cred .dist {
+      grid-column: 1 / -1; margin-top: 6px; display: inline-flex; align-items: center; gap: 7px; width: fit-content;
+      font-family: var(--mono); font-size: 11px; color: var(--amber-soft);
+      padding: 5px 11px; border: 1px solid rgba(234, 165, 62, 0.24); border-radius: 100px;
+      background: rgba(234, 165, 62, 0.05);
+    }
+    .profile-avail {
+      margin-top: 20px; display: inline-flex; align-items: center; gap: 9px;
+      font-family: var(--mono); font-size: 12.5px; color: var(--amber-soft);
+      padding: 8px 14px; border: 1px solid rgba(234, 165, 62, 0.28); border-radius: 100px;
+      background: rgba(234, 165, 62, 0.06);
+    }
+    .profile-avail .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
+      box-shadow: 0 0 0 3px rgba(234, 165, 62, 0.18);
+    }
+
+    /* ---------- experience / timeline ---------- */
+    .timeline { display: flex; flex-direction: column; }
+    .texp {
+      display: grid; grid-template-columns: 150px 20px 1fr; gap: 0 22px;
+      padding: 28px 0; border-top: 1px solid var(--line);
+    }
+    .texp:first-child { border-top: 0; padding-top: 6px; }
+    .texp-when {
+      font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: 0.02em;
+      padding-top: 3px;
+    }
+    .texp-when b { display: block; color: var(--soft); font-size: 12.5px; margin-bottom: 3px; }
+    .texp-when .cur { display: block; color: var(--amber); font-size: 10.5px; letter-spacing: 0.04em; }
+    .texp .ctags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .texp-rail { position: relative; display: flex; justify-content: center; }
+    .texp-rail::before {
+      content: ""; position: absolute; top: 16px; bottom: -28px; width: 1px; background: var(--line);
+    }
+    .texp:last-child .texp-rail::before { display: none; }
+    .texp-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: var(--panel-2);
+      border: 1.5px solid var(--line-2); margin-top: 5px; flex-shrink: 0;
+    }
+    .texp[data-current="true"] .texp-dot { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 4px rgba(234,165,62,0.16); }
+    .texp-role { font-family: var(--display); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--text); }
+    .texp-org { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+    .texp-body { margin-top: 12px; color: var(--soft); font-size: 14.5px; line-height: 1.6; }
+    .texp-body p + p { margin-top: 8px; }
+    .texp-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .texp-metrics span {
+      font-family: var(--mono); font-size: 11.5px; color: var(--amber-soft);
+      padding: 5px 10px; border: 1px solid rgba(234, 165, 62, 0.24); border-radius: 100px;
+      background: rgba(234, 165, 62, 0.05);
+    }
+    .texp-link {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+      font-family: var(--mono); font-size: 12px; color: var(--amber); text-decoration: none;
+    }
+    .texp-link:hover { color: var(--amber-soft); }
+    @media (max-width: 760px) {
+      .texp { grid-template-columns: 16px 1fr; }
+      .texp-when { display: none; }
+    }
+
+    /* ---------- skills / layered detail ---------- */
+    .focus { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+    .rail { display: flex; flex-direction: column; gap: 6px; }
+    .rail-btn {
+      display: grid; grid-template-columns: 10px 1fr; gap: 12px; align-items: center;
+      text-align: left; padding: 13px 15px; cursor: pointer;
+      border: 1px solid var(--line); border-radius: 9px; background: var(--panel);
+      transition: border-color 0.18s, background 0.18s, transform 0.16s;
+    }
+    .rail-btn:hover { transform: translateX(2px); border-color: var(--line-2); }
+    .rail-btn .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); opacity: 0.55; box-shadow: 0 0 10px var(--c); transition: opacity 0.18s; }
+    .rail-btn .nm { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--soft); }
+    .rail-btn .tier { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--faint); margin-top: 1px; }
+    .rail-btn.active {
+      background: color-mix(in srgb, var(--c) 12%, var(--panel));
+      border-color: color-mix(in srgb, var(--c) 55%, transparent);
+    }
+    .rail-btn.active .dot { opacity: 1; }
+    .rail-btn.active .nm { color: var(--text); }
+
+    .panel {
+      border: 1px solid var(--line-2); border-radius: 14px;
+      background:
+        radial-gradient(40rem 24rem at 100% 0%, color-mix(in srgb, var(--c) 9%, transparent), transparent 70%),
+        var(--panel);
+      padding: 30px;
+      min-height: 460px;
+      animation: panelIn 0.35s ease both;
+    }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .panel .ptag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
+    .panel h3 { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -0.02em; margin: 12px 0 12px; }
+    .panel .sum { color: var(--soft); font-size: 16px; max-width: 60ch; line-height: 1.55; }
+
+    .detail { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 26px; }
+    .dbox { border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,0.018); padding: 18px; }
+    .dbox h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .dbox ul li { position: relative; padding-left: 16px; color: var(--soft); font-size: 13.5px; line-height: 1.5; margin-bottom: 7px; }
+    .dbox ul li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 5px; height: 5px; border-radius: 1px; background: var(--c); opacity: 0.7; }
+    .dbox ul li:last-child { margin-bottom: 0; }
+    .dbox ul li a { color: var(--soft); border-bottom: 1px solid transparent; transition: color 0.16s, border-color 0.16s; }
+    .dbox ul li a:hover { color: var(--c); border-bottom-color: color-mix(in srgb, var(--c) 50%, transparent); }
+    .dbox p { color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-family: var(--mono); font-size: 11px; color: var(--soft);
+      padding: 4px 9px; border-radius: 5px; border: 1px solid var(--line-2);
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* ---------- projects ---------- */
+    .toolbar { display: grid; grid-template-columns: 1fr 300px; gap: 18px; align-items: center; margin-bottom: 26px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+    .fbtn {
+      font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.02em;
+      color: var(--muted); padding: 7px 12px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--line); background: transparent;
+      transition: color 0.16s, border-color 0.16s, background 0.16s;
+    }
+    .fbtn:hover { color: var(--soft); border-color: var(--line-2); }
+    .fbtn.active { color: #20150a; background: var(--amber); border-color: var(--amber); font-weight: 600; }
+    .search {
+      height: 42px; width: 100%; padding: 0 14px 0 38px; border-radius: 8px;
+      border: 1px solid var(--line); background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23868c96' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 14px center;
+      font-family: var(--mono); font-size: 12.5px; color: var(--text); outline: none;
+      transition: border-color 0.18s;
+    }
+    .search:focus { border-color: var(--amber); }
+    .search::placeholder { color: var(--faint); }
+
+    .feat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card {
+      display: flex; flex-direction: column;
+      border: 1px solid var(--line); border-radius: 12px; background: var(--panel);
+      padding: 24px; transition: border-color 0.2s, transform 0.18s, background 0.2s;
+    }
+    .card:hover { border-color: var(--line-2); transform: translateY(-3px); background: var(--panel-2); }
+    .card .meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card .meta .dom { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+    .card .meta .key { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+    .card h3 { font-family: var(--mono); font-weight: 600; font-size: 16px; color: var(--text); letter-spacing: -0.01em; word-break: break-word; }
+    .card .desc { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 10px 0 16px; flex: 1; }
+    .card .ctags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .card .open {
+      font-family: var(--mono); font-size: 12px; color: var(--amber);
+      display: inline-flex; align-items: center; gap: 7px; margin-top: auto;
+      border-bottom: 1px solid transparent; align-self: flex-start; transition: gap 0.16s, border-color 0.16s;
+    }
+    .card .open:hover { gap: 11px; border-bottom-color: rgba(234,165,62,0.5); }
+
+    .index-head { display: flex; align-items: baseline; justify-content: space-between; margin: 56px 0 14px; gap: 16px; flex-wrap: wrap; }
+    .index-head h3 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+    .index-head .count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+    .repo-index { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .repo {
+      display: grid; grid-template-columns: 1.6fr 0.8fr 1.6fr auto; gap: 16px; align-items: center;
+      padding: 13px 18px; border-top: 1px solid var(--line);
+      transition: background 0.16s;
+    }
+    .repo:first-child { border-top: 0; }
+    .repo:hover { background: rgba(236,238,243,0.035); }
+    .repo .rn { font-family: var(--mono); font-size: 13px; color: var(--soft); word-break: break-word; }
+    .repo:hover .rn { color: var(--text); }
+    .repo .rd { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--amber); }
+    .repo .rt { font-family: var(--mono); font-size: 11.5px; color: var(--faint); }
+    .repo .go { font-family: var(--mono); font-size: 13px; color: var(--muted); transition: color 0.16s, transform 0.16s; }
+    .repo:hover .go { color: var(--amber); transform: translateX(2px); }
+
+    /* ---------- contact ---------- */
+    .contact-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+    .contact h2 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 3.4vw, 42px); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .contact p { color: var(--muted); font-size: 16px; max-width: 46ch; }
+    .contact-actions { display: flex; flex-direction: column; gap: 10px; }
+    .clink {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border: 1px solid var(--line); border-radius: 10px;
+      background: var(--panel); transition: border-color 0.18s, background 0.18s, transform 0.16s;
+    }
+    .clink:hover { border-color: var(--amber); background: var(--panel-2); transform: translateX(3px); }
+    .clink .l { font-family: var(--display); font-weight: 700; font-size: 15px; }
+    .clink .h { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .clink .go { font-family: var(--mono); color: var(--amber); }
+
+    /* ---------- footer ---------- */
+    footer { border-top: 1px solid var(--line); padding: 30px 0 40px; }
+    .foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .foot-inner .fl { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .foot-inner .fr { font-family: var(--mono); font-size: 11.5px; color: var(--faint); }
+
+    /* ---------- reveal ---------- */
+    .rev { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .rev.in { opacity: 1; transform: none; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width: 940px) {
+      .hero-grid, .profile-grid, .focus, .contact-grid { grid-template-columns: 1fr; }
+      .hero-grid { gap: 40px; }
+      .rail { flex-direction: row; flex-wrap: wrap; }
+      .rail-btn { flex: 1 1 160px; }
+      .toolbar { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: calc(100% - 28px); }
+      .nav { display: none; }
+      .brand .role { display: none; }
+      .feat, .detail { grid-template-columns: 1fr; }
+      .stack-foot { grid-template-columns: 1fr 1fr; }
+      .stack-foot div:nth-child(2) { border-right: 0; }
+      .repo { grid-template-columns: 1fr auto; }
+      .repo .rd, .repo .rt { display: none; }
+      .block { padding: 64px 0; }
+      .hero { padding: 52px 0; }
+      .layer .carry { display: none; }
+      .layer { grid-template-columns: 26px 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+      .signal { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===================== HEADER ===================== -->
+  <header class="top" data-elevated="false">
+    <div class="wrap top-inner">
+      <a class="brand" href="#top" aria-label="Haut de page">
+        <span class="idx">~/</span>
+        <span class="nm">HAMAILI</span>
+        <span class="role" data-i18n="brandRole">systèmes connectés</span>
+      </a>
+      <nav class="nav" aria-label="Navigation">
+        <a href="#profile" data-i18n="navProfile">Profil</a>
+        <a href="#experience" data-i18n="navExp">Expérience</a>
+        <a href="#education" data-i18n="navEdu">Formation</a>
+        <a href="#stack" data-i18n="navStack">Pile</a>
+        <a href="#projects" data-i18n="navProjects">Projets</a>
+        <a href="#contact" data-i18n="navContact">Contact</a>
+      </nav>
+      <button class="lang" id="langBtn" type="button" aria-label="Switch language">EN</button>
+      <a class="gh" href="https://github.com/doditpiot" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="rev">
+          <p class="eyebrow"><span data-i18n="heroKick1">ingénieur</span><span class="bar">/</span><span data-i18n="heroKick2">systèmes connectés</span></p>
+          <h1 data-i18n="heroTitle">Du capteur à la décision, je construis <span class="hl">toute la chaîne.</span></h1>
+          <p class="hero-lead" data-i18n="heroLead">Logiciel, réseaux TCP/IP, IoT embarqué, données, cybersécurité, DevOps et IA — assemblés pour que capteurs, protocoles, services et modèles parlent la même langue.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#stack"><span data-i18n="cta1">Parcourir la pile</span><span class="arr">↓</span></a>
+            <a class="btn btn-ghost" href="#projects"><span data-i18n="cta2">Voir les projets</span><span class="arr">↗</span></a>
+          </div>
+        </div>
+
+        <div class="stack rev" aria-label="Pile système interactive">
+          <div class="stack-head">
+            <span data-i18n="stackKick">pile système</span>
+            <b data-i18n="stackHint">capteur → décision</b>
+            <span class="axis" data-i18n="stackAxis">edge → intelligence</span>
+          </div>
+          <div class="stack-body" id="stackBody">
+            <div class="signal"></div>
+          </div>
+          <div class="stack-foot">
+            <div><b id="mRepos">—</b><span data-i18n="mReposL">dépôts</span></div>
+            <div><b id="mLayers">—</b><span data-i18n="mLayersL">couches</span></div>
+            <div><b>FR·EN</b><span data-i18n="mLangL">bilingue</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROFILE ===================== -->
+    <section id="profile" class="block">
+      <div class="wrap">
+        <div class="head rev">
+          <p class="eyebrow" data-i18n="profileKick">profil</p>
+          <h2 data-i18n="profileTitle">Là où le logiciel rencontre le matériel.</h2>
+        </div>
+        <div class="rev">
+          <p class="profile-lead" data-i18n="profileLead">Ingénieur IoT, 28 ans, basé à Montbéliard. Je conçois des systèmes connectés de bout en bout : acquisition embarquée, transmission des mesures, stockage et supervision via tableaux de bord — avec, quand le cas s'y prête, une couche IA pour l'analyse de signaux et séries temporelles.</p>
+          <p class="profile-pos" data-i18n="profilePos">Le réseau, la donnée et la cybersécurité ne sont pas des à-côtés : ce sont les conditions pour qu'une chaîne IoT tienne en production.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EXPERIENCE ===================== -->
+    <section id="experience" class="block">
+      <div class="wrap">
+        <div class="head rev">
+          <p class="eyebrow" data-i18n="expKick">expérience</p>
+          <h2 data-i18n="expTitle">Pas que des dépôts. Du terrain aussi.</h2>
+          <p data-i18n="expText">Quatre missions, du réseau d'entreprise à la recherche en mobilité, en passant par l'IoT en conditions réelles.</p>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </section>
+
+    <!-- ===================== EDUCATION ===================== -->
+    <section id="education" class="block">
+      <div class="wrap">
+        <div class="head rev">
+          <p class="eyebrow" data-i18n="eduKick">formation</p>
+          <h2 data-i18n="eduTitle">Quatre ans à Skikda, deux à Montbéliard.</h2>
+        </div>
+        <div class="creds rev" id="creds"></div>
+      </div>
+    </section>
+
+    <!-- ===================== STACK / SKILLS ===================== -->
+    <section id="stack" class="block">
+      <div class="wrap">
+        <div class="head rev">
+          <p class="eyebrow" data-i18n="skillsKick">compétences · par couche</p>
+          <h2 data-i18n="skillsTitle">La pile, couche par couche.</h2>
+          <p data-i18n="skillsText">Chaque domaine est une couche de la même chaîne — du socle logiciel et de l'edge embarqué jusqu'à l'intelligence appliquée. Choisis une couche pour voir ce que je maîtrise, avec quoi, et comment elle se branche aux autres.</p>
+        </div>
+        <div class="focus rev">
+          <div class="rail" id="rail"></div>
+          <article class="panel" id="panel"></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROJECTS ===================== -->
+    <section id="projects" class="block">
+      <div class="wrap">
+        <div class="head rev">
+          <p class="eyebrow" data-i18n="projectsKick">projets</p>
+          <h2 data-i18n="projectsTitle">Des dépôts, pas des slogans.</h2>
+          <p data-i18n="projectsText">Filtre par domaine ou cherche un protocole, un langage, une techno. Les projets clés sont détaillés ; le reste est indexé en clair, comme un journal de labo.</p>
+        </div>
+
+        <div class="toolbar rev">
+          <div class="filters" id="filters"></div>
+          <input class="search" id="search" type="search" aria-label="Rechercher" />
+        </div>
+
+        <div class="feat" id="featured"></div>
+
+        <div class="index-head rev">
+          <h3 data-i18n="indexTitle">Index des dépôts</h3>
+          <span class="count" id="count"></span>
+        </div>
+        <div class="repo-index" id="repoIndex"></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section id="contact" class="block">
+      <div class="wrap contact-grid">
+        <div class="contact rev">
+          <p class="eyebrow" data-i18n="contactKick">contact</p>
+          <h2 data-i18n="contactTitle">Le code est sur GitHub. Le parcours est sur LinkedIn.</h2>
+          <p data-i18n="contactText">Le meilleur point de départ pour juger : ouvrir les dépôts. Pour le contexte et l'expérience, LinkedIn.</p>
+        </div>
+        <div class="contact-actions rev">
+          <a class="clink" href="https://github.com/doditpiot" target="_blank" rel="noreferrer">
+            <span><span class="l">GitHub</span><br><span class="h">@doditpiot</span></span>
+            <span class="go">↗</span>
+          </a>
+          <a class="clink" href="https://www.linkedin.com/in/ahmed-imad-hamaili-66a43b327/" target="_blank" rel="noreferrer">
+            <span><span class="l">LinkedIn</span><br><span class="h">Ahmed-Imad Hamaili</span></span>
+            <span class="go">↗</span>
+          </a>
+          <a class="clink" href="https://github.com/doditpiot?tab=repositories" target="_blank" rel="noreferrer">
+            <span><span class="l" data-i18n="allReposL">Tous les dépôts</span><br><span class="h">github.com/doditpiot</span></span>
+            <span class="go">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <span class="fl">HAMAILI Ahmed-Imad · <span data-i18n="footTag">systèmes connectés</span></span>
+      <span class="fr"><span data-i18n="footNote">2026</span></span>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       DATA
+       ============================================================ */
+    const links = {
+      github: 'https://github.com/doditpiot',
+      repositories: 'https://github.com/doditpiot?tab=repositories',
+      linkedin: 'https://www.linkedin.com/in/ahmed-imad-hamaili-66a43b327/',
+    };
+
+    const i18n = {
+      fr: {
+        brandRole: 'systèmes connectés',
+        navProfile: 'Profil', navExp: 'Expérience', navEdu: 'Formation', navStack: 'Pile', navProjects: 'Projets', navContact: 'Contact',
+        heroKick1: 'ingénieur', heroKick2: 'systèmes connectés',
+        heroTitle: 'Du capteur à la décision, je construis <span class="hl">toute la chaîne.</span>',
+        heroLead: 'Logiciel, réseaux TCP/IP, IoT embarqué, données, cybersécurité, DevOps et IA — assemblés pour que capteurs, protocoles, services et modèles parlent la même langue.',
+        cta1: 'Parcourir la pile', cta2: 'Voir les projets',
+        stackKick: 'pile système', stackHint: 'capteur → décision', stackAxis: 'edge → intelligence',
+        mReposL: 'dépôts', mLayersL: 'couches', mLangL: 'bilingue',
+        profileKick: 'profil',
+        profileTitle: 'Là où le logiciel rencontre le matériel.',
+        profileLead: 'Ingénieur IoT, 28 ans, basé à Montbéliard. Je conçois des systèmes connectés de bout en bout : acquisition embarquée, transmission des mesures, stockage et supervision via tableaux de bord — avec, quand le cas s\u2019y prête, une couche IA pour l\u2019analyse de signaux et séries temporelles.',
+        profilePos: 'Le réseau, la donnée et la cybersécurité ne sont pas des à-côtés : ce sont les conditions pour qu\u2019une chaîne IoT tienne en production.',
+        expKick: 'expérience',
+        expTitle: 'Pas que des dépôts. Du terrain aussi.',
+        expText: 'Quatre missions, du réseau d\u2019entreprise à la recherche en mobilité, en passant par l\u2019IoT en conditions réelles.',
+        expCurrent: 'en cours',
+        eduKick: 'formation',
+        eduTitle: 'Quatre ans à Skikda, deux à Montbéliard.',
+        skillsKick: 'compétences · par couche',
+        skillsTitle: 'La pile, couche par couche.',
+        skillsText: 'Chaque domaine est une couche de la même chaîne — du socle logiciel et de l\u2019edge embarqué jusqu\u2019à l\u2019intelligence appliquée. Choisis une couche pour voir ce que je maîtrise, avec quoi, et comment elle se branche aux autres.',
+        projectsKick: 'projets',
+        projectsTitle: 'Des dépôts, pas des slogans.',
+        projectsText: 'Filtre par domaine ou cherche un protocole, un langage, une techno. Les projets clés sont détaillés ; le reste est indexé en clair, comme un journal de labo.',
+        indexTitle: 'Index des dépôts',
+        contactKick: 'contact',
+        contactTitle: 'Le code est sur GitHub. Le parcours est sur LinkedIn.',
+        contactText: 'Le meilleur point de départ pour juger : ouvrir les dépôts. Pour le contexte et l\u2019expérience, LinkedIn.',
+        allReposL: 'Tous les dépôts',
+        footTag: 'systèmes connectés', footNote: '2026',
+        searchPh: 'protocole, langage, domaine, dépôt…',
+        keyProject: 'projet clé', openRepo: 'ouvrir le dépôt',
+        master: 'Ce que je maîtrise', tools: 'Technologies', related: 'Projets liés', how: 'Comment ça se branche',
+        countTpl: (n) => `${n} dépôt${n > 1 ? 's' : ''}`,
+        filters: { All: 'Tous', Software: 'Software', API: 'APIs', Networks: 'Réseaux', IoT: 'IoT', Security: 'Cyber', Data: 'Données', DevOps: 'DevOps', Distributed: 'Distribué', AI: 'IA', Mobility: 'Mobilité', Embedded: 'Embarqué', Apps: 'Apps' },
+      },
+      en: {
+        brandRole: 'connected systems',
+        navProfile: 'Profile', navExp: 'Experience', navEdu: 'Education', navStack: 'Stack', navProjects: 'Projects', navContact: 'Contact',
+        heroKick1: 'engineer', heroKick2: 'connected systems',
+        heroTitle: 'From sensor to decision, I build <span class="hl">the whole chain.</span>',
+        heroLead: 'Software, TCP/IP networks, embedded IoT, data, cybersecurity, DevOps and AI — assembled so sensors, protocols, services and models speak the same language.',
+        cta1: 'Explore the stack', cta2: 'See the projects',
+        stackKick: 'system stack', stackHint: 'sensor → decision', stackAxis: 'edge → intelligence',
+        mReposL: 'repos', mLayersL: 'layers', mLangL: 'bilingual',
+        profileKick: 'profile',
+        profileTitle: 'Where software meets hardware.',
+        profileLead: 'IoT engineer, 28, based in Montbéliard, France. I design connected systems end to end: embedded acquisition, measurement transmission, storage and dashboard monitoring — with an AI layer where it fits, for signal and time-series analysis.',
+        profilePos: 'Networking, data and cybersecurity aren\u2019t side concerns — they\u2019re what keeps an IoT chain working in production.',
+        expKick: 'experience',
+        expTitle: 'Not just repos. Field work too.',
+        expText: 'Four roles, from enterprise networking to mobility research, with hands-on IoT in between.',
+        expCurrent: 'ongoing',
+        eduKick: 'education',
+        eduTitle: 'Four years in Skikda, two in Montbéliard.',
+        skillsKick: 'skills · by layer',
+        skillsTitle: 'The stack, layer by layer.',
+        skillsText: 'Each domain is a layer of the same chain — from the software substrate and embedded edge up to applied intelligence. Pick a layer to see what I work with, with which tools, and how it plugs into the others.',
+        projectsKick: 'projects',
+        projectsTitle: 'Repositories, not slogans.',
+        projectsText: 'Filter by domain or search a protocol, language or tool. Key projects are detailed; the rest is indexed in plain sight, like a lab log.',
+        indexTitle: 'Repository index',
+        contactKick: 'contact',
+        contactTitle: 'The code is on GitHub. The career is on LinkedIn.',
+        contactText: 'The best way to judge: open the repositories. For context and experience, LinkedIn.',
+        allReposL: 'All repositories',
+        footTag: 'connected systems', footNote: '2026',
+        searchPh: 'protocol, language, domain, repo…',
+        keyProject: 'key project', openRepo: 'open repository',
+        master: 'What I work with', tools: 'Technologies', related: 'Linked projects', how: 'How it plugs in',
+        countTpl: (n) => `${n} repositor${n > 1 ? 'ies' : 'y'}`,
+        filters: { All: 'All', Software: 'Software', API: 'APIs', Networks: 'Networks', IoT: 'IoT', Security: 'Cyber', Data: 'Data', DevOps: 'DevOps', Distributed: 'Distributed', AI: 'AI', Mobility: 'Mobility', Embedded: 'Embedded', Apps: 'Apps' },
+      },
+    };
+
+    /* Layers, ordered as a real bottom-up pipeline (read top->bottom: foundation -> applied) */
+    const layers = [
+      {
+        id: 'software', domain: 'Software', color: '#cdd4dc',
+        tier: { fr: 'socle', en: 'foundation' },
+        carry: { fr: 'le socle', en: 'the substrate' },
+        title: { fr: 'Développement logiciel', en: 'Software development' },
+        summary: {
+          fr: 'Le socle de programmation sur lequel tout le reste est bâti : applications web, backend, desktop, mobile, scripts et composants orientés systèmes.',
+          en: 'The programming substrate everything else is built on: web, backend, desktop, mobile apps, scripts and system-oriented components.',
+        },
+        mastery: {
+          fr: ['Programmation orientée objet et procédurale', 'Structures de données, logique applicative, organisation du code', 'Applications web, backend, mobile et scripts techniques'],
+          en: ['Object-oriented and procedural programming', 'Data structures, application logic, code organization', 'Web, backend, mobile apps and technical scripts'],
+        },
+        tools: ['Python', 'Java', 'C', 'C++', 'C#', 'PHP', 'Pascal', 'JavaScript', 'Dart', 'Kotlin', 'Swift', 'HTML/CSS', 'SQL'],
+        projects: ['java-tcp-chat', 'java-swing-calculator', 'kotlin-notes', 'sensor-network-graph-analyzer', 'wedding-guest-manager'],
+        how: {
+          fr: 'Cette couche nourrit toutes les autres : APIs, dashboards, outils de parsing, simulateurs, applis mobiles et moteurs de calcul reposent dessus.',
+          en: 'This layer feeds all the others: APIs, dashboards, parsers, simulators, mobile apps and calculation engines all sit on top of it.',
+        },
+      },
+      {
+        id: 'iot', domain: 'IoT', color: '#5fe3a4',
+        tier: { fr: 'edge', en: 'edge' },
+        carry: { fr: 'les mesures', en: 'the readings' },
+        title: { fr: 'IoT, capteurs et edge', en: 'IoT, sensors and edge' },
+        summary: {
+          fr: 'La chaîne complète capteur → message → stockage → dashboard : microcontrôleurs, Raspberry Pi, protocoles IoT, télémétrie, alertes et supervision.',
+          en: 'The full sensor → message → storage → dashboard chain: microcontrollers, Raspberry Pi, IoT protocols, telemetry, alerts and monitoring.',
+        },
+        mastery: {
+          fr: ['ESP32, Arduino, Raspberry Pi et capteurs', 'MQTT, CoAP, AMQP, LoRaWAN, Zigbee, NB-IoT et BLE', 'Télémétrie, alertes, Grafana, Node-RED et contrôle PID'],
+          en: ['ESP32, Arduino, Raspberry Pi and sensors', 'MQTT, CoAP, AMQP, LoRaWAN, Zigbee, NB-IoT and BLE', 'Telemetry, alerts, Grafana, Node-RED and PID control'],
+        },
+        tools: ['ESP32', 'Raspberry Pi', 'Arduino', 'MQTT', 'CoAP', 'AMQP', 'LoRaWAN', 'Zigbee', 'NB-IoT', 'BLE', 'Node-RED', 'Grafana', 'PID'],
+        projects: ['irrigation-iot-stack', 'secure-iot-monitoring-platform', 'sentinel-live-iot-twin', 'lora-positioning-signal-lab', 'switchboard-iot-messaging-lab'],
+        how: {
+          fr: 'Elle transforme le monde physique en flux exploitables : humidité, température, RSSI radio, état machine, alertes et historiques.',
+          en: 'It turns the physical world into usable streams: humidity, temperature, radio RSSI, machine state, alerts and history.',
+        },
+      },
+      {
+        id: 'systems', domain: 'Embedded', color: '#8fd6c8',
+        tier: { fr: 'edge', en: 'edge' },
+        carry: { fr: 'l\u2019exécution', en: 'the runtime' },
+        title: { fr: 'Systèmes et scripting', en: 'Systems and scripting' },
+        summary: {
+          fr: 'Maîtrise de l\u2019environnement d\u2019exécution : Linux/Windows, scripts Bash/Shell, automatisation, logs, outils CLI et habitudes de dev système.',
+          en: 'Control of the runtime environment: Linux/Windows, Bash/Shell scripts, automation, logs, CLI tools and system-dev habits.',
+        },
+        mastery: {
+          fr: ['Linux Debian/Ubuntu/Kali et Windows', 'Bash, Shell, scripts d\u2019automatisation et commandes système', 'Organisation de projets, tests, validation et documentation'],
+          en: ['Linux Debian/Ubuntu/Kali and Windows', 'Bash, Shell, automation scripts and system commands', 'Project organization, tests, validation and documentation'],
+        },
+        tools: ['Linux', 'Debian', 'Ubuntu', 'Kali', 'Windows', 'Bash', 'Shell', 'CLI', 'logs'],
+        projects: ['proxmox-automation-lab', 'network-monitoring-stack', 'packet-capture-analyzer', 'kubernetes-allocation-app'],
+        how: {
+          fr: 'Elle rend les projets installables, débogables et maintenables : setup, validation, automatisation et maintenance au quotidien.',
+          en: 'It makes projects installable, debuggable and maintainable: setup, validation, automation and day-to-day maintenance.',
+        },
+      },
+      {
+        id: 'networks', domain: 'Networks', color: '#5cc8ff',
+        tier: { fr: 'transport', en: 'transport' },
+        carry: { fr: 'les paquets', en: 'the packets' },
+        title: { fr: 'Réseaux TCP/IP et infrastructures', en: 'TCP/IP networks and infrastructure' },
+        summary: {
+          fr: 'Lire un réseau de bout en bout : adressage, résolution, services, commutation, routage, segmentation, translation, sécurité, supervision et diagnostic.',
+          en: 'Reading a network end to end: addressing, resolution, services, switching, routing, segmentation, translation, security, monitoring and troubleshooting.',
+        },
+        mastery: {
+          fr: ['Adressage IPv4/IPv6, sous-réseaux, ping, ICMP et diagnostic', 'ARP, DNS, DHCP, TCP, UDP et services réseau de base', 'VLAN, trunking, STP, LACP, segmentation et virtualisation réseau', 'Routage statique et dynamique : RIP, OSPF, EIGRP, BGP', 'NAT, PAT, ACL, pare-feu, VPN, IDS/IPS et exposition contrôlée', 'Load balancing, supervision, captures PCAP et analyse Wireshark'],
+          en: ['IPv4/IPv6 addressing, subnetting, ping, ICMP and troubleshooting', 'ARP, DNS, DHCP, TCP, UDP and core network services', 'VLANs, trunking, STP, LACP, segmentation and network virtualization', 'Static and dynamic routing: RIP, OSPF, EIGRP, BGP', 'NAT, PAT, ACLs, firewalls, VPNs, IDS/IPS and controlled exposure', 'Load balancing, monitoring, PCAP captures and Wireshark analysis'],
+        },
+        tools: ['TCP/IP', 'IPv4', 'IPv6', 'subnetting', 'ICMP', 'ARP', 'DNS', 'DHCP', 'TCP', 'UDP', 'VLAN', 'STP', 'LACP', 'RIP', 'OSPF', 'EIGRP', 'BGP', 'NAT', 'PAT', 'ACL', 'Firewall', 'VPN', 'IDS/IPS', 'load balancing', 'SSH', 'Wireshark', 'PCAP', 'Packet Tracer'],
+        projects: ['packet-tracer-vlan-nat-acl-network', 'wireguard-site-to-site-lab', 'packet-capture-analyzer', 'network-monitoring-stack', 'pulse-load-balancer', 'lte-link-budget-throughput'],
+        how: {
+          fr: 'C\u2019est le socle qui relie IoT, VPN, supervision, cybersécurité, mobilité, APIs et services distribués : comment les flux circulent, sont isolés, filtrés, routés, observés et sécurisés.',
+          en: 'It is the base that connects IoT, VPN, monitoring, security, mobility, APIs and distributed services: how flows move, get isolated, filtered, routed, observed and secured.',
+        },
+      },
+      {
+        id: 'security', domain: 'Security', color: '#ff7d7d',
+        tier: { fr: 'transversal', en: 'cross-cutting' },
+        carry: { fr: 'la confiance', en: 'the trust' },
+        title: { fr: 'Cybersécurité réseau', en: 'Network cybersecurity' },
+        summary: {
+          fr: 'Une sécurité orientée protocoles, chiffrement, identité, segmentation, VPN, analyse de trafic et durcissement — pas une couche à part, une exigence transversale.',
+          en: 'Security focused on protocols, encryption, identity, segmentation, VPN, traffic analysis and hardening — not a separate layer, a cross-cutting requirement.',
+        },
+        mastery: {
+          fr: ['SSL/TLS, PKI, RSA/ECC, AES/DES', 'MFA, OAuth2/OIDC, VPN WireGuard', 'Wireshark, nmap, PCAP, ACL, IDS/IPS, pare-feu et segmentation'],
+          en: ['SSL/TLS, PKI, RSA/ECC, AES/DES', 'MFA, OAuth2/OIDC, WireGuard VPN', 'Wireshark, nmap, PCAP, ACLs, IDS/IPS, firewalls and segmentation'],
+        },
+        tools: ['SSL/TLS', 'PKI', 'WireGuard', 'VPN', 'RSA/ECC', 'AES/DES', 'MFA', 'OAuth2/OIDC', 'IDS/IPS', 'Wireshark', 'nmap', 'PCAP', 'Firewall'],
+        projects: ['packet-capture-analyzer', 'wireguard-site-to-site-lab', 'openssl-crypto-lab', 'java-crypto-ciphers-lab', 'packet-tracer-vlan-nat-acl-network'],
+        how: {
+          fr: 'Elle traverse toute la pile : elle protège les flux, les accès, les services, les tunnels et les données, à chaque étage.',
+          en: 'It runs through the whole stack: it protects flows, access, services, tunnels and data, at every floor.',
+        },
+      },
+      {
+        id: 'api', domain: 'API', color: '#b89cff',
+        tier: { fr: 'service', en: 'service' },
+        carry: { fr: 'les échanges', en: 'the exchanges' },
+        title: { fr: 'APIs et intégration', en: 'APIs and integration' },
+        summary: {
+          fr: 'La couche d\u2019échange entre applications, capteurs, dashboards, bases de données et services métier.',
+          en: 'The exchange layer between applications, sensors, dashboards, databases and business services.',
+        },
+        mastery: {
+          fr: ['Conception REST et endpoints backend', 'GraphQL pour requêtes structurées', 'SOAP et WebSocket selon les besoins d\u2019intégration'],
+          en: ['REST design and backend endpoints', 'GraphQL for structured queries', 'SOAP and WebSocket depending on integration needs'],
+        },
+        tools: ['REST APIs', 'GraphQL', 'SOAP', 'HTTP', 'JSON', 'WebSocket', 'Node.js', 'Express.js', 'Flask', 'FastAPI'],
+        projects: ['secure-iot-monitoring-platform', 'sentinel-live-iot-twin', 'indoor-positioning-wifi-knn', 'node-mqtt-pubsub'],
+        how: {
+          fr: 'Elle relie les données terrain aux interfaces : télémétrie IoT, résultats de calcul, alertes, dashboards et services mobiles.',
+          en: 'It connects field data to interfaces: IoT telemetry, calculation results, alerts, dashboards and mobile services.',
+        },
+      },
+      {
+        id: 'data', domain: 'Data', color: '#67dcc4',
+        tier: { fr: 'données', en: 'data' },
+        carry: { fr: 'la mémoire', en: 'the memory' },
+        title: { fr: 'Données et bases', en: 'Data and databases' },
+        summary: {
+          fr: 'Stockage relationnel, spatial, NoSQL et séries temporelles pour IoT, mobilité, cartographie, supervision et APIs.',
+          en: 'Relational, spatial, NoSQL and time-series storage for IoT, mobility, mapping, monitoring and APIs.',
+        },
+        mastery: {
+          fr: ['SQL, PostgreSQL, PostGIS et modélisation relationnelle', 'MongoDB, NoSQL, GraphQL et stockage document', 'InfluxDB, ELK Stack, Elasticsearch, Logstash, Kibana'],
+          en: ['SQL, PostgreSQL, PostGIS and relational modeling', 'MongoDB, NoSQL, GraphQL and document storage', 'InfluxDB, ELK Stack, Elasticsearch, Logstash, Kibana'],
+        },
+        tools: ['SQL', 'PostgreSQL', 'PostGIS', 'MongoDB', 'NoSQL', 'GraphQL', 'InfluxDB', 'ELK Stack', 'Elasticsearch', 'Logstash', 'Kibana'],
+        projects: ['secure-iot-monitoring-platform', 'irrigation-iot-stack', 'osm-landuse-grid-model', 'osm-road-network-pathfinder', 'air-quality-ml-analysis'],
+        how: {
+          fr: 'Elle structure les données : télémétrie, logs, traces, géométrie, historiques, résultats ML et états applicatifs.',
+          en: 'It structures the data: telemetry, logs, traces, geometry, history, ML results and application states.',
+        },
+      },
+      {
+        id: 'devops', domain: 'DevOps', color: '#a9d65a',
+        tier: { fr: 'ops', en: 'ops' },
+        carry: { fr: 'la mise en service', en: 'the delivery' },
+        title: { fr: 'DevOps, cloud et observabilité', en: 'DevOps, cloud and observability' },
+        summary: {
+          fr: 'Déployer, superviser, automatiser : conteneurs, orchestration, virtualisation, CI/CD, métriques, logs et infrastructure.',
+          en: 'Deploy, monitor, automate: containers, orchestration, virtualization, CI/CD, metrics, logs and infrastructure.',
+        },
+        mastery: {
+          fr: ['Docker, Kubernetes, Proxmox, AWS IoT Core et Terraform', 'GitLab CI, Ansible, automatisation et scripts', 'Prometheus, Grafana, ELK Stack, logs et métriques'],
+          en: ['Docker, Kubernetes, Proxmox, AWS IoT Core and Terraform', 'GitLab CI, Ansible, automation and scripts', 'Prometheus, Grafana, ELK Stack, logs and metrics'],
+        },
+        tools: ['Docker', 'Kubernetes', 'AWS IoT Core', 'Terraform', 'Proxmox', 'GitLab CI', 'Ansible', 'Prometheus', 'Grafana', 'ELK Stack'],
+        projects: ['network-monitoring-stack', 'proxmox-automation-lab', 'kubernetes-allocation-app', 'secure-iot-monitoring-platform', 'pulse-load-balancer'],
+        how: {
+          fr: 'Elle rend les projets lançables, surveillables et maintenables : services, dashboards, pipelines et environnements locaux.',
+          en: 'It makes projects runnable, observable and maintainable: services, dashboards, pipelines and local environments.',
+        },
+      },
+      {
+        id: 'ai', domain: 'AI', color: '#e08cff',
+        tier: { fr: 'intelligence', en: 'intelligence' },
+        carry: { fr: 'les décisions', en: 'the decisions' },
+        title: { fr: 'Intelligence artificielle', en: 'Artificial intelligence' },
+        summary: {
+          fr: 'IA appliquée aux séries temporelles, images, texte, trajectoires, détection d\u2019anomalies, décision et classification.',
+          en: 'AI applied to time series, images, text, trajectories, anomaly detection, decision and classification.',
+        },
+        mastery: {
+          fr: ['Apprentissage supervisé et non supervisé', 'ML : SVM, Random Forest, XGBoost, KNN, Naive Bayes, K-Means', 'DL : CNN, RNN, LSTM, MLP, Transfer Learning', 'RL : DQN, Double/Dueling DQN, Policy Gradient, Q-Learning', 'Algorithmes génétiques, systèmes experts, logique floue'],
+          en: ['Supervised and unsupervised learning', 'ML: SVM, Random Forest, XGBoost, KNN, Naive Bayes, K-Means', 'DL: CNN, RNN, LSTM, MLP, Transfer Learning', 'RL: DQN, Double/Dueling DQN, Policy Gradient, Q-Learning', 'Genetic algorithms, expert systems, fuzzy logic'],
+        },
+        tools: ['TensorFlow', 'Keras', 'Scikit-learn', 'DQN', 'Policy Gradient', 'Q-Learning', 'CNN', 'RNN', 'LSTM', 'MLP', 'SVM', 'Random Forest', 'XGBoost', 'KNN', 'K-Means', 'fuzzy logic'],
+        projects: ['foursquare-next-category-lstm', 'adsb-xgboost-anomaly-detection', 'tiny-imagenet-cnn-transfer-learning', 'celeba-face-attribute-cnn', 'taxi-rl-comparison', 'nabla-cnn-from-scratch'],
+        how: {
+          fr: 'Elle complète les systèmes : scoring d\u2019anomalies, prédiction, classification, aide à la décision et analyse des données terrain.',
+          en: 'It completes the systems: anomaly scoring, prediction, classification, decision support and field-data analysis.',
+        },
+      },
+      {
+        id: 'mobility', domain: 'Mobility', color: '#57cdd6',
+        tier: { fr: 'appliqué', en: 'applied' },
+        carry: { fr: 'le terrain', en: 'the field' },
+        title: { fr: 'Smart cities et mobilité', en: 'Smart cities and mobility' },
+        summary: {
+          fr: 'Cartographie, routage, positionnement indoor, OSM, données transport, capteurs urbains et mobilité multimodale — la pile mise au service d\u2019un cas concret.',
+          en: 'Mapping, routing, indoor positioning, OSM, transport data, urban sensors and multimodal mobility — the stack put to work on a concrete case.',
+        },
+        mastery: {
+          fr: ['OSM, GIS, routage et graphes routiers', 'Positionnement indoor Wi-Fi RSSI et KNN pondéré', 'Smart cities, capteurs, transport, parking et mobilité multimodale'],
+          en: ['OSM, GIS, routing and road graphs', 'Indoor Wi-Fi RSSI positioning and weighted KNN', 'Smart cities, sensors, transport, parking and multimodal mobility'],
+        },
+        tools: ['OSM', 'GIS', 'routing', 'A*', 'Folium', 'PostGIS', 'indoor positioning', 'weighted KNN', 'transport data'],
+        projects: ['indoor-positioning-wifi-knn', 'osm-road-network-pathfinder', 'osm-tilemap-assembler', 'osm-landuse-grid-model', 'lora-positioning-signal-lab'],
+        how: {
+          fr: 'Elle relie réseaux, capteurs, données spatiales et algorithmes pour traiter des besoins réels de ville connectée.',
+          en: 'It connects networks, sensors, spatial data and algorithms to address real connected-city needs.',
+        },
+      },
+    ];
+
+    /* Professional experience, most recent first */
+    const experience = [
+      {
+        id: 'mucar', current: true,
+        when: { fr: 'Fév. 2026 – Présent', en: 'Feb. 2026 – Present' },
+        role: { fr: 'Stagiaire Recherche — Covoiturage Dynamique & Intégration API', en: 'Research Intern — Dynamic Carpooling & API Integration' },
+        org: { fr: 'Stage · Laboratoires FEMTO-ST & THEMA · Montbéliard, France', en: 'Internship · FEMTO-ST & THEMA research labs · Montbéliard, France' },
+        body: {
+          fr: ['Développement de MuCAR, un site de covoiturage dynamique (Flask) avec comptes à rôles flexibles (passager, conducteur, ou les deux) et publication d\u2019offres/demandes avec fenêtres horaires et points de passage.',
+               'Intégration de l\u2019algorithme d\u2019appariement GbFCA (Greedy-based Flexible Carpooling Algorithm, FastAPI) pour calculer les trajets partagés et leurs arrêts à partir des offres et demandes en base.',
+               'Conception d\u2019un service bridge (FastAPI) qui projette en lecture seule les trajets, véhicules et événements MongoDB de MuCAR vers PostgreSQL/PostGIS, pour les exposer via une API dédiée à la visualisation Mobility Showroom.',
+               'Calcul backend de la progression des véhicules de covoiturage le long de leur trajet, pour une animation cohérente aux côtés des bus et trains déjà simulés dans le showroom.'],
+          en: ['Built MuCAR, a dynamic carpooling site (Flask) with flexible-role accounts (passenger, driver, or both) and offer/demand publishing with time windows and waypoints.',
+               'Integrated the GbFCA matching algorithm (Greedy-based Flexible Carpooling Algorithm, FastAPI) to compute shared trips and their stops from stored offers and demands.',
+               'Designed a bridge service (FastAPI) that projects MuCAR\u2019s MongoDB trips, vehicles and events read-only into PostgreSQL/PostGIS, exposing them through a dedicated API for the Mobility Showroom visualization.',
+               'Backend computation of carpool vehicle progress along its route, for animation consistent with the buses and trains already simulated in the showroom.'],
+        },
+        tools: ['Flask', 'FastAPI', 'MongoDB', 'PostgreSQL', 'PostGIS', 'GbFCA', 'Docker Compose'],
+        metrics: [],
+        repo: null,
+        repoNote: { fr: 'projet de stage en cours · dépôt non public', en: 'ongoing internship project · private repository' },
+      },
+      {
+        id: 'mobility', current: true,
+        when: { fr: 'Sept. 2024 – Présent', en: 'Sept. 2024 – Present' },
+        role: { fr: 'Mobility Showroom — Visualisation de données de mobilité hétérogènes', en: 'Mobility Showroom — Heterogeneous Mobility Data Visualization' },
+        org: { fr: 'Projet de recherche · Laboratoires FEMTO-ST & THEMA · Montbéliard, France', en: 'Research project · FEMTO-ST & THEMA research labs · Montbéliard, France' },
+        body: {
+          fr: ['Conception d\u2019une plateforme web (FastAPI) qui agrège et met en carte des réseaux de transport multimodaux : bus (Optymo, Mobigo Doubs, Hereva Héricourt), train (SNCF, dont temps réel), cars longue distance (FlixBus) et vélos en libre-service.',
+               'Ingestion et normalisation de flux GTFS hétérogènes par opérateur, avec mise en cache et reconstruction de graphes de réseau exploitables pour la recherche d\u2019itinéraire et l\u2019analyse de zone.',
+               'API de recherche d\u2019itinéraires, d\u2019arrêts les plus proches, de statistiques territoriales et de plateau temps réel, avec simulation visuelle de la progression des véhicules sur la carte.',
+               'Générateur de catalogue de mobilité assisté par un agent LLM cantonné à la recherche et au filtrage de sources par territoire — aucune donnée de transport n\u2019est produite par le modèle, le téléchargement et le rendu restent déterministes.'],
+          en: ['Built a web platform (FastAPI) that aggregates and maps multimodal transport networks: buses (Optymo, Mobigo Doubs, Hereva Héricourt), trains (SNCF, including real-time), long-distance coaches (FlixBus) and bike-share.',
+               'Ingested and normalized heterogeneous per-operator GTFS feeds, with caching and reconstruction of network graphs usable for itinerary search and zone analysis.',
+               'Built APIs for itinerary search, nearest stops, territory statistics and a real-time traffic board, with visual simulation of vehicle progress on the map.',
+               'Mobility catalogue generator assisted by an LLM agent scoped to searching and filtering sources per territory — the model produces no transport data itself; downloads and rendering stay deterministic.'],
+        },
+        tools: ['FastAPI', 'GTFS', 'PostGIS', 'NetworkX', 'Pandas', 'Leaflet'],
+        metrics: [],
+        repo: null,
+        repoNote: { fr: 'projet de recherche en cours · pas encore publié', en: 'ongoing research project · not yet public' },
+      },
+      {
+        id: 'cloud', current: false,
+        when: { fr: '2024 – 2025', en: '2024 – 2025' },
+        role: { fr: 'Virtualisation & Cloud — Proxmox, Docker, Kubernetes, AWS', en: 'Virtualization & Cloud — Proxmox, Docker, Kubernetes, AWS' },
+        org: { fr: 'Travaux pratiques · Montbéliard, France', en: 'Hands-on labs · Montbéliard, France' },
+        body: {
+          fr: ['Conception d\u2019un mini-environnement Proxmox (KVM/LXC) : VM/containers, allocation CPU/RAM, réseau bridges/NAT pour simuler un contexte datacenter.',
+               'Docker sur hôtes dédiés et en nested : construction d\u2019images, déploiement de services web, exposition via redirections de ports.',
+               'Déploiement multi-services avec Docker Compose (WordPress/MySQL, volumes persistants) et orchestration Kubernetes (NodePort, PV/PVC) pour services stateful.'],
+          en: ['Built a mini Proxmox environment (KVM/LXC): VMs/containers, CPU/RAM allocation, bridge/NAT networking to simulate a datacenter context.',
+               'Docker on dedicated and nested hosts: image builds, web service deployment, exposure via port forwarding.',
+               'Multi-service deployment with Docker Compose (WordPress/MySQL, persistent volumes) and Kubernetes orchestration (NodePort, PV/PVC) for stateful services.'],
+        },
+        tools: ['Proxmox', 'Docker', 'Kubernetes', 'AWS', 'Docker Compose'],
+        metrics: [],
+        repo: null,
+        repoNote: null,
+      },
+      {
+        id: 'iot-freelance', current: false,
+        when: { fr: 'Nov. 2024 – Janv. 2025', en: 'Nov. 2024 – Jan. 2025' },
+        role: { fr: 'Concepteur de Systèmes Embarqués et IoT', en: 'Embedded & IoT Systems Designer' },
+        org: { fr: 'Mission freelance · Montbéliard, France', en: 'Freelance mission · Montbéliard, France' },
+        body: {
+          fr: ['Chaîne IoT de contrôle-commande pour l\u2019arrosage : acquisition de capteurs d\u2019humidité, normalisation, seuils et pilotage d\u2019actionneur (manuel/automatique) avec logique d\u2019alerte.',
+               'Plateforme edge conteneurisée sur Raspberry Pi (Docker) : broker MQTT Mosquitto, orchestration de flux et règles métier via Node-RED, historisation time-series dans InfluxDB.',
+               'Exposition via API HTTP/REST : application Android (Kotlin) pour supervision et pilotage, dashboards Grafana, notifications mobile et e-mail sur anomalies.'],
+          en: ['IoT control chain for irrigation: humidity sensor acquisition, normalization, thresholds and actuator control (manual/automatic) with alert logic.',
+               'Containerized edge platform on Raspberry Pi (Docker): Mosquitto MQTT broker, flow orchestration and business rules via Node-RED, time-series history in InfluxDB.',
+               'Exposed via HTTP/REST API: Android (Kotlin) app for supervision and control, Grafana dashboards, mobile and email notifications on anomalies.'],
+        },
+        tools: ['Raspberry Pi', 'Docker', 'MQTT', 'Node-RED', 'InfluxDB', 'Grafana', 'Kotlin'],
+        metrics: [],
+        repo: 'irrigation-iot-stack',
+        repoNote: null,
+      },
+      {
+        id: 'sonatrach', current: false,
+        when: { fr: 'Fév. 2023 – Juil. 2023', en: 'Feb. 2023 – Jul. 2023' },
+        role: { fr: 'Ingénieur Réseau Stagiaire', en: 'Network Engineer Intern' },
+        org: { fr: 'Sonatrach · Skikda, Algérie', en: 'Sonatrach · Skikda, Algeria' },
+        body: {
+          fr: ['Refonte LAN : segmentation VLAN 802.1Q (access/trunk) pour isoler les flux OT/IT, résilience RSTP (BPDU Guard, Root Guard, storm-control).',
+               'Capacité & disponibilité : agrégations LACP/EtherChannel sur liens critiques, redondance L3 (VRRP/HSRP) pour les passerelles inter-VLAN.',
+               'Sécurité réseau : filtrage au moindre privilège (ACL inter-VLAN, pare-feu, DMZ, limitation des flux Est-Ouest, accès d\u2019administration sécurisés).',
+               'Supervision : chaîne SNMP + Syslog centralisé + NTP, tableaux de bord et alerting, corrélation de logs pour RCA.',
+               'Qualité d\u2019exploitation : standardisation des configurations, sauvegarde/restore, procédures de change pré/post-check.'],
+          en: ['LAN redesign: 802.1Q VLAN segmentation (access/trunk) to isolate OT/IT flows, RSTP resilience (BPDU Guard, Root Guard, storm-control).',
+               'Capacity & availability: LACP/EtherChannel aggregation on critical links, L3 redundancy (VRRP/HSRP) for inter-VLAN gateways.',
+               'Network security: least-privilege filtering (inter-VLAN ACLs, firewall rules, DMZ segmentation, East-West flow limits, secured admin access).',
+               'Monitoring: SNMP chain + centralized Syslog + NTP, dashboards and alerting, log correlation for RCA.',
+               'Operational quality: configuration standardization, backup/restore, pre/post-check change procedures.'],
+        },
+        tools: ['VLAN 802.1Q', 'RSTP', 'LACP', 'VRRP/HSRP', 'ACL', 'SNMP', 'Syslog', 'NTP'],
+        metrics: [
+          { fr: '+10% disponibilité', en: '+10% uptime' },
+          { fr: '4 pannes critiques résolues', en: '4 critical incidents resolved' },
+          { fr: '-15% anomalies récurrentes', en: '-15% recurring anomalies' },
+        ],
+        repo: null,
+        repoNote: null,
+      },
+    ];
+
+    /* Education, most recent first */
+    const education = [
+      {
+        id: 'master-iot', level: 'MASTER 2', yr: { fr: 'Prévu août 2026', en: 'Expected Aug. 2026' },
+        degree: { fr: 'Internet des Objets (IoT)', en: 'Internet of Things (IoT)' },
+        org: { fr: 'Université Marie & Louis Pasteur, UFR STGI · Montbéliard, France', en: 'Université Marie & Louis Pasteur, UFR STGI · Montbéliard, France' },
+        dist: null,
+      },
+      {
+        id: 'master1-iot', level: 'MASTER 1', yr: { fr: '2024–2025', en: '2024–2025' },
+        degree: { fr: 'Internet des Objets (IoT)', en: 'Internet of Things (IoT)' },
+        org: { fr: 'Université Marie & Louis Pasteur, UFR STGI · Montbéliard, France', en: 'Université Marie & Louis Pasteur, UFR STGI · Montbéliard, France' },
+        dist: null,
+      },
+      {
+        id: 'master-rsd', level: 'MASTER', yr: { fr: '2021–2023', en: '2021–2023' },
+        degree: { fr: 'Réseaux et Systèmes Distribués', en: 'Networks and Distributed Systems' },
+        org: { fr: 'Université 20 Août 1955 · Skikda, Algérie', en: 'Université 20 Août 1955 · Skikda, Algeria' },
+        dist: { fr: 'Élu meilleur étudiant de la promotion, 2 années consécutives', en: 'Voted top student of the cohort, 2 consecutive years' },
+      },
+      {
+        id: 'licence', level: 'LICENCE', yr: { fr: '2017–2021', en: '2017–2021' },
+        degree: { fr: 'Systèmes Informatiques', en: 'Computer Systems' },
+        org: { fr: 'Université 20 Août 1955 · Skikda, Algérie', en: 'Université 20 Août 1955 · Skikda, Algeria' },
+        dist: null,
+      },
+    ];
+
+    const projects = [
+      { name: 'secure-iot-monitoring-platform', domain: 'IoT', featured: true, tags: ['MQTT', 'FastAPI', 'PostgreSQL', 'Vue', 'Docker', 'Prometheus', 'Grafana'], fr: 'Plateforme de supervision IoT avec télémétrie MQTT, API, base PostgreSQL, dashboard web, métriques Prometheus et visualisation Grafana.', en: 'IoT monitoring platform with MQTT telemetry, API, PostgreSQL storage, web dashboard, Prometheus metrics and Grafana visualization.' },
+      { name: 'irrigation-iot-stack', domain: 'IoT', featured: true, tags: ['ESP32', 'Raspberry Pi', 'MQTT', 'Node-RED', 'InfluxDB', 'Grafana', 'Kotlin'], fr: 'Système IoT d\u2019irrigation avec capteurs, pipeline MQTT, Node-RED, stockage InfluxDB, Grafana, alertes et application mobile.', en: 'IoT irrigation system with sensors, MQTT pipeline, Node-RED, InfluxDB storage, Grafana, alerts and mobile app.' },
+      { name: 'sentinel-live-iot-twin', domain: 'IoT', featured: true, tags: ['MQTT', 'STOMP', 'AI scoring', 'dashboard', 'monitoring'], fr: 'Jumeau numérique IoT temps réel avec télémétrie MQTT, scoring d\u2019anomalie, alertes STOMP et tableau de bord opérateur.', en: 'Real-time IoT digital twin with MQTT telemetry, anomaly scoring, STOMP alerts and an operator dashboard.' },
+      { name: 'indoor-positioning-wifi-knn', domain: 'Mobility', featured: true, tags: ['Wi-Fi RSSI', 'fingerprinting', 'weighted KNN', 'Three.js', 'Express'], fr: 'Plateforme de positionnement indoor sur deux étages avec fingerprinting Wi-Fi RSSI, weighted KNN, API Express et visualisation 3D.', en: 'Dual-floor indoor positioning platform with Wi-Fi RSSI fingerprinting, weighted KNN, Express API and 3D visualization.' },
+      { name: 'wireguard-site-to-site-lab', domain: 'Security', featured: true, tags: ['WireGuard', 'VPN', 'routing', 'firewall'], fr: 'Lab réseau site-à-site avec tunnel WireGuard, routage, règles pare-feu et documentation de configuration.', en: 'Site-to-site networking lab with WireGuard tunnel, routing, firewall rules and configuration documentation.' },
+      { name: 'packet-capture-analyzer', domain: 'Security', featured: true, tags: ['PCAP', 'traffic analysis', 'network security', 'Python'], fr: 'Analyseur de captures réseau pour inspecter le trafic, les flux, les protocoles et les signaux utiles côté sécurité.', en: 'Packet capture analyzer for inspecting traffic, flows, protocols and useful security signals.' },
+      { name: 'lora-positioning-signal-lab', domain: 'Networks', featured: true, tags: ['LoRa', 'Arduino', 'C++', 'RSSI', 'serial logs'], fr: 'Expérimentation LoRa avec firmware Arduino/C++, mesures RSSI, logs série et analyse de signal pour positionnement.', en: 'LoRa experiment with Arduino/C++ firmware, RSSI measurements, serial logs and signal analysis for positioning.' },
+      { name: 'osm-road-network-pathfinder', domain: 'Mobility', featured: true, tags: ['OSM', 'A*', 'Folium', 'routing', 'GIS'], fr: 'Moteur de routage sur réseau routier OSM avec A*, pondération par vitesse, sens uniques et carte interactive Folium.', en: 'OSM road-network routing engine with A*, speed-aware weighting, one-way handling and interactive Folium output.' },
+      { name: 'osm-tilemap-assembler', domain: 'Mobility', featured: false, tags: ['OSM', 'XYZ tiles', 'Web Mercator', 'GIS', 'Python'], fr: 'Toolkit Python pour assembler des images statiques depuis des tuiles OpenStreetMap XYZ avec cache local.', en: 'Python toolkit for assembling static maps from OpenStreetMap XYZ tiles with local caching.' },
+      { name: 'network-monitoring-stack', domain: 'DevOps', featured: false, tags: ['monitoring', 'Grafana', 'Prometheus', 'Docker'], fr: 'Stack de monitoring réseau orientée services, métriques, dashboards et observabilité locale.', en: 'Network monitoring stack focused on services, metrics, dashboards and local observability.' },
+      { name: 'proxmox-automation-lab', domain: 'DevOps', featured: false, tags: ['Proxmox', 'LXC', 'Ceph', 'Ansible', 'Docker Swarm'], fr: 'Lab d\u2019automatisation Proxmox avec virtualisation, conteneurs, stockage, orchestration et scripts d\u2019infrastructure.', en: 'Proxmox automation lab with virtualization, containers, storage, orchestration and infrastructure scripts.' },
+      { name: 'kubernetes-allocation-app', domain: 'DevOps', featured: false, tags: ['Kubernetes', 'Nginx', 'PHP-FPM', 'replicas'], fr: 'Application déployée sur Kubernetes avec services, réplicas, persistance et séparation des composants.', en: 'Application deployed on Kubernetes with services, replicas, persistence and component separation.' },
+      { name: 'pulse-load-balancer', domain: 'Distributed', featured: false, tags: ['Go', 'HTTP', 'load balancing', 'health checks'], fr: 'Load balancer HTTP en Go avec stratégies de répartition, health checks et interface d\u2019administration.', en: 'HTTP load balancer in Go with balancing strategies, health checks and admin interface.' },
+      { name: 'corba-bank-system', domain: 'Distributed', featured: false, tags: ['CORBA', 'Java', 'distributed objects'], fr: 'Système bancaire distribué basé sur CORBA et objets distants.', en: 'Distributed banking system based on CORBA and remote objects.' },
+      { name: 'jmx-rmi-bank-management', domain: 'Distributed', featured: false, tags: ['JMX', 'RMI', 'Java', 'management'], fr: 'Gestion bancaire distribuée avec JMX/RMI et supervision d\u2019objets Java.', en: 'Distributed bank management with JMX/RMI and Java object supervision.' },
+      { name: 'java-parent-child-ipc', domain: 'Distributed', featured: false, tags: ['Java', 'IPC', 'processes'], fr: 'Communication inter-processus parent/enfant en Java.', en: 'Parent/child inter-process communication in Java.' },
+      { name: 'java-tcp-chat', domain: 'Networks', featured: false, tags: ['Java', 'TCP', 'sockets'], fr: 'Chat TCP client/serveur basé sur sockets Java.', en: 'Client/server TCP chat based on Java sockets.' },
+      { name: 'packet-tracer-vlan-nat-acl-network', domain: 'Networks', featured: false, tags: ['Cisco', 'VLAN', 'NAT', 'ACL', 'routing'], fr: 'Lab Cisco Packet Tracer avec VLAN, NAT, ACL, routage et segmentation réseau.', en: 'Cisco Packet Tracer lab with VLANs, NAT, ACLs, routing and network segmentation.' },
+      { name: '5g-nr-map-planner', domain: 'Networks', featured: false, tags: ['5G NR', 'OSM', 'radio planning', 'maps'], fr: 'Planificateur cartographique autour de paramètres 5G NR, couverture et métriques de réseau.', en: 'Map planner around 5G NR parameters, coverage and network metrics.' },
+      { name: 'lte-link-budget-throughput', domain: 'Networks', featured: false, tags: ['LTE', 'link budget', 'SINR', 'throughput'], fr: 'Analyse LTE sur link budget, SINR, modulation et débit utile.', en: 'LTE analysis around link budget, SINR, modulation and useful throughput.' },
+      { name: 'node-mqtt-pubsub', domain: 'API', featured: false, tags: ['Node.js', 'MQTT', 'pub/sub'], fr: 'Projet pub/sub MQTT en Node.js pour messages IoT.', en: 'MQTT pub/sub project in Node.js for IoT messages.' },
+      { name: 'switchboard-iot-messaging-lab', domain: 'IoT', featured: false, tags: ['MQTT', 'AMQP', 'STOMP', 'CoAP'], fr: 'Lab de messagerie IoT comparant MQTT, AMQP, STOMP et CoAP.', en: 'IoT messaging lab comparing MQTT, AMQP, STOMP and CoAP.' },
+      { name: 'sensor-network-graph-analyzer', domain: 'Embedded', featured: false, tags: ['C++', 'sensor networks', 'graphs'], fr: 'Analyse de graphes pour réseaux de capteurs en C++.', en: 'Graph analysis for sensor networks in C++.' },
+      { name: 'arduino-self-balancing-robot', domain: 'Embedded', featured: false, tags: ['Arduino', 'C++', 'robotics', 'control'], fr: 'Robot auto-équilibré Arduino avec logique de contrôle.', en: 'Arduino self-balancing robot with control logic.' },
+      { name: 'blinky-border-light-animation', domain: 'Embedded', featured: false, tags: ['C++', 'visible simulation', 'animation'], fr: 'Animation lumineuse distribuée en environnement de simulation modulaire.', en: 'Distributed light animation in a modular simulation environment.' },
+      { name: 'catom-meta-module-locomotion', domain: 'Embedded', featured: false, tags: ['C++', 'modular robotics', 'simulation'], fr: 'Locomotion de modules robotiques en simulation C++.', en: 'Robotic module locomotion in C++ simulation.' },
+      { name: 'border-search-visiblesim', domain: 'Embedded', featured: false, tags: ['C++', 'VisibleSim', 'distributed algorithms'], fr: 'Recherche de bordure en simulation distribuée.', en: 'Border search in distributed simulation.' },
+      { name: 'box-search-visiblesim', domain: 'Embedded', featured: false, tags: ['C++', 'VisibleSim', 'search'], fr: 'Recherche de boîte en simulation distribuée.', en: 'Box search in distributed simulation.' },
+      { name: 'foursquare-next-category-lstm', domain: 'AI', featured: false, tags: ['LSTM', 'Keras', 'sequence modeling', 'geospatial'], fr: 'Modèle LSTM pour prédire la prochaine catégorie de lieu à partir de séquences de check-ins.', en: 'LSTM model for next venue-category prediction from check-in sequences.' },
+      { name: 'adsb-xgboost-anomaly-detection', domain: 'AI', featured: false, tags: ['XGBoost', 'ADS-B', 'anomaly detection'], fr: 'Détection d\u2019anomalies sur données ADS-B avec XGBoost et features de trajectoire.', en: 'Anomaly detection on ADS-B data with XGBoost and trajectory features.' },
+      { name: 'tiny-imagenet-cnn-transfer-learning', domain: 'AI', featured: false, tags: ['CNN', 'transfer learning', 'image classification'], fr: 'Classification Tiny ImageNet avec CNN et transfer learning.', en: 'Tiny ImageNet classification with CNN and transfer learning.' },
+      { name: 'celeba-face-attribute-cnn', domain: 'AI', featured: false, tags: ['CNN', 'CelebA', 'computer vision'], fr: 'Classification d\u2019attributs faciaux avec CNN sur CelebA.', en: 'Face attribute classification with CNN on CelebA.' },
+      { name: 'nabla-cnn-from-scratch', domain: 'AI', featured: false, tags: ['CNN', 'from scratch', 'Python'], fr: 'Implémentation CNN depuis zéro pour comprendre les blocs internes.', en: 'CNN implementation from scratch to understand internal blocks.' },
+      { name: 'taxi-rl-comparison', domain: 'AI', featured: false, tags: ['reinforcement learning', 'Q-learning'], fr: 'Comparaison d\u2019approches de reinforcement learning sur l\u2019environnement Taxi.', en: 'Comparison of reinforcement learning approaches on the Taxi environment.' },
+      { name: 'allocine-sentiment-classifier', domain: 'AI', featured: false, tags: ['NLP', 'sentiment', 'classification'], fr: 'Classification de sentiment sur critiques Allociné.', en: 'Sentiment classification on Allociné reviews.' },
+      { name: 'air-quality-ml-analysis', domain: 'AI', featured: false, tags: ['air quality', 'regression', 'classification'], fr: 'Analyse qualité de l\u2019air avec modèles de régression, classification et visualisation.', en: 'Air quality analysis with regression, classification and visualization.' },
+      { name: 'nlp-text-processing-toolkit', domain: 'AI', featured: false, tags: ['NLP', 'text processing', 'Python'], fr: 'Toolkit de traitement texte pour preprocessing, nettoyage et analyse.', en: 'Text processing toolkit for preprocessing, cleaning and analysis.' },
+      { name: 'openssl-crypto-lab', domain: 'Security', featured: false, tags: ['OpenSSL', 'TLS', 'PKI', 'crypto'], fr: 'Lab cryptographie autour d\u2019OpenSSL, TLS, certificats et PKI.', en: 'Cryptography lab around OpenSSL, TLS, certificates and PKI.' },
+      { name: 'java-crypto-ciphers-lab', domain: 'Security', featured: false, tags: ['Java', 'ciphers', 'crypto'], fr: 'Lab Java d\u2019implémentation et de test de chiffrements.', en: 'Java lab implementing and testing ciphers.' },
+      { name: 'osm-landuse-grid-model', domain: 'Mobility', featured: false, tags: ['OSM', 'land use', 'grid', 'GIS'], fr: 'Modèle de grille d\u2019occupation du sol à partir de données OSM.', en: 'Land-use grid model built from OSM data.' },
+      { name: '5g-nr-map-planner', domain: 'Networks', featured: false, tags: ['5G NR', 'planning', 'maps'], fr: 'Planification cartographique 5G NR.', en: '5G NR map-based planning.' },
+      { name: 'wedding-guest-manager', domain: 'Apps', featured: false, tags: ['web app', 'data management'], fr: 'Application de gestion d\u2019invités avec données structurées.', en: 'Guest management application with structured data.' },
+      { name: 'kotlin-notes', domain: 'Apps', featured: false, tags: ['Kotlin', 'mobile', 'notes'], fr: 'Application mobile de notes en Kotlin.', en: 'Mobile notes application in Kotlin.' },
+      { name: 'java-swing-calculator', domain: 'Apps', featured: false, tags: ['Java', 'Swing', 'desktop'], fr: 'Calculatrice desktop en Java Swing.', en: 'Desktop calculator in Java Swing.' },
+    ];
+    // de-dup by name (keep first)
+    const seen = new Set();
+    const repoList = projects.filter(p => (seen.has(p.name) ? false : seen.add(p.name)));
+
+    /* ============================================================
+       STATE + HELPERS
+       ============================================================ */
+    let lang = 'fr';
+    let activeLayer = 'networks';
+    let filter = 'All';
+    let term = '';
+
+    const $ = (s) => document.querySelector(s);
+    const L = () => i18n[lang];
+    const tr = (o) => (o && typeof o === 'object' ? o[lang] : o);
+    const repoUrl = (n) => `${links.github}/${n}`;
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+    /* ============================================================
+       RENDER
+       ============================================================ */
+    function applyI18n() {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const v = L()[el.dataset.i18n];
+        if (typeof v === 'string') el.innerHTML = v;
+      });
+      $('#langBtn').textContent = lang === 'fr' ? 'EN' : 'FR';
+      $('#search').placeholder = L().searchPh;
+    }
+
+    function renderStack() {
+      const body = $('#stackBody');
+      // bottom-up: reverse so foundation sits at the bottom
+      const rows = [...layers].reverse().map((ly) => `
+        <button class="layer" type="button" data-layer="${ly.id}" style="--c:${ly.color}" aria-label="${esc(tr(ly.title))}">
+          <span class="dot"></span>
+          <span><span class="nm">${esc(tr(ly.title))}</span><span class="tier">${esc(tr(ly.tier))}</span></span>
+          <span class="carry">${esc(tr(ly.carry))}</span>
+        </button>`).join('');
+      body.innerHTML = `<div class="signal"></div>${rows}`;
+      body.querySelectorAll('.layer').forEach((b) => {
+        b.addEventListener('click', () => {
+          activeLayer = b.dataset.layer;
+          renderFocus();
+          $('#stack').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      $('#mRepos').textContent = repoList.length + '+';
+      $('#mLayers').textContent = layers.length;
+    }
+
+    function renderExperience() {
+      $('#timeline').innerHTML = experience.map((x) => `
+        <article class="texp" data-current="${x.current}">
+          <div class="texp-when"><b>${esc(tr(x.when))}</b>${x.current ? `<span class="cur">● ${esc(L().expCurrent)}</span>` : ''}</div>
+          <div class="texp-rail"><span class="texp-dot"></span></div>
+          <div>
+            <h3 class="texp-role">${esc(tr(x.role))}</h3>
+            <p class="texp-org">${esc(tr(x.org))}</p>
+            <div class="texp-body">${x.body[lang].map((p) => `<p>${esc(p)}</p>`).join('')}</div>
+            <div class="ctags">${x.tools.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+            ${x.metrics.length ? `<div class="texp-metrics">${x.metrics.map((m) => `<span>${esc(tr(m))}</span>`).join('')}</div>` : ''}
+            ${x.repo ? `<a class="texp-link" href="${repoUrl(x.repo)}" target="_blank" rel="noreferrer">${esc(x.repo)} ↗</a>`
+                     : (x.repoNote ? `<p class="texp-org" style="margin-top:12px">${esc(tr(x.repoNote))}</p>` : '')}
+          </div>
+        </article>`).join('');
+    }
+
+    function renderEducation() {
+      $('#creds').innerHTML = education.map((e) => `
+        <div class="cred">
+          <span class="lv">${esc(e.level)}</span>
+          <span class="dg">${esc(tr(e.degree))}</span>
+          <span class="yr">${esc(tr(e.yr))}</span>
+          <span class="org">${esc(tr(e.org))}</span>
+          ${e.dist ? `<span class="dist">★ ${esc(tr(e.dist))}</span>` : ''}
+        </div>`).join('');
+    }
+
+    function renderRail() {
+      const rail = $('#rail');
+      rail.innerHTML = layers.map((ly) => `
+        <button class="rail-btn ${ly.id === activeLayer ? 'active' : ''}" type="button" data-layer="${ly.id}" style="--c:${ly.color}">
+          <span class="dot"></span>
+          <span><span class="nm">${esc(tr(ly.title))}</span><span class="tier">${esc(tr(ly.tier))}</span></span>
+        </button>`).join('');
+      rail.querySelectorAll('.rail-btn').forEach((b) => {
+        b.addEventListener('click', () => { activeLayer = b.dataset.layer; renderFocus(); });
+      });
+    }
+
+    function renderPanel() {
+      const ly = layers.find((x) => x.id === activeLayer) || layers[0];
+      const related = repoList.filter((p) => ly.projects.includes(p.name));
+      const panel = $('#panel');
+      panel.style.setProperty('--c', ly.color);
+      panel.innerHTML = `
+        <p class="ptag">${esc(tr(ly.tier))} · ${esc(ly.domain)}</p>
+        <h3>${esc(tr(ly.title))}</h3>
+        <p class="sum">${esc(tr(ly.summary))}</p>
+        <div class="detail">
+          <div class="dbox">
+            <h4>${esc(L().master)}</h4>
+            <ul>${ly.mastery[lang].map((m) => `<li>${esc(m)}</li>`).join('')}</ul>
+          </div>
+          <div class="dbox">
+            <h4>${esc(L().tools)}</h4>
+            <div class="tags">${ly.tools.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+          </div>
+          <div class="dbox">
+            <h4>${esc(L().related)}</h4>
+            <ul>${related.map((p) => `<li><a href="${repoUrl(p.name)}" target="_blank" rel="noreferrer">${esc(p.name)}</a></li>`).join('')}</ul>
+          </div>
+          <div class="dbox">
+            <h4>${esc(L().how)}</h4>
+            <p>${esc(tr(ly.how))}</p>
+          </div>
+        </div>`;
+    }
+
+    function renderFocus() { renderRail(); renderPanel(); }
+
+    function renderFilters() {
+      const order = ['All', 'Software', 'API', 'Networks', 'IoT', 'Security', 'Data', 'DevOps', 'Distributed', 'AI', 'Mobility', 'Embedded', 'Apps'];
+      $('#filters').innerHTML = order.map((f) => `
+        <button class="fbtn ${f === filter ? 'active' : ''}" type="button" data-f="${f}">${esc(L().filters[f])}</button>`).join('');
+      $('#filters').querySelectorAll('.fbtn').forEach((b) => {
+        b.addEventListener('click', () => { filter = b.dataset.f; renderFilters(); renderProjects(); });
+      });
+    }
+
+    function match(p) {
+      const okF = filter === 'All' || p.domain === filter;
+      const hay = [p.name, p.domain, p.fr, p.en, ...p.tags].join(' ').toLowerCase();
+      return okF && hay.includes(term.toLowerCase());
+    }
+
+    function renderProjects() {
+      const list = repoList.filter(match);
+      const feat = list.filter((p) => p.featured);
+      $('#featured').innerHTML = feat.map((p) => `
+        <article class="card">
+          <div class="meta"><span class="dom">${esc(p.domain)}</span><span class="key">${esc(L().keyProject)}</span></div>
+          <h3>${esc(p.name)}</h3>
+          <p class="desc">${esc(p[lang])}</p>
+          <div class="ctags">${p.tags.slice(0, 5).map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+          <a class="open" href="${repoUrl(p.name)}" target="_blank" rel="noreferrer">${esc(L().openRepo)} ↗</a>
+        </article>`).join('');
+
+      const rest = list.filter((p) => !p.featured);
+      $('#repoIndex').innerHTML = rest.map((p) => `
+        <a class="repo" href="${repoUrl(p.name)}" target="_blank" rel="noreferrer">
+          <span class="rn">${esc(p.name)}</span>
+          <span class="rd">${esc(p.domain)}</span>
+          <span class="rt">${esc(p.tags.slice(0, 3).join(' · '))}</span>
+          <span class="go">↗</span>
+        </a>`).join('');
+
+      $('#count').textContent = L().countTpl(list.length);
+    }
+
+    function renderAll() { applyI18n(); renderStack(); renderExperience(); renderEducation(); renderFocus(); renderFilters(); renderProjects(); }
+
+    /* ============================================================
+       EVENTS
+       ============================================================ */
+    $('#langBtn').addEventListener('click', () => { lang = lang === 'fr' ? 'en' : 'fr'; renderAll(); });
+    $('#search').addEventListener('input', (e) => { term = e.target.value; renderProjects(); });
+
+    const topBar = $('.top');
+    window.addEventListener('scroll', () => { topBar.dataset.elevated = window.scrollY > 8 ? 'true' : 'false'; }, { passive: true });
+
+    // reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.rev').forEach((el) => io.observe(el));
+
+    renderAll();
+  </script>
+</body>
+</html>
