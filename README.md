@@ -1,5 +1,5 @@
 @'
-# HAMAILI Ahmed-Imad · Connected Systems Portfolio
+# HAMAILI Imad · Connected Systems Portfolio
 
 Bilingual portfolio presenting my work around connected systems: embedded IoT, TCP/IP networks, cybersecurity, DevOps, data pipelines, mobility systems and applied AI.
 
@@ -31,5 +31,5 @@ This repository contains the static source of the portfolio.
 
 ## Author
 
-HAMAILI Ahmed-Imad
+HAMAILI Imad
 '@ | Set-Content -Path README.md -Encoding UTF8
